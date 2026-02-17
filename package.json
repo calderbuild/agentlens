@@ -1,0 +1,15 @@
+{
+  "name": "agentlens",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MCP Agent Session Replay & Visual Debugger",
+  "workspaces": [
+    "packages/proxy",
+    "packages/dashboard"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "dev:dashboard": "npm run dev --workspace=packages/dashboard",
+    "dev:proxy": "npm run dev --workspace=packages/proxy"
+  }
+}
