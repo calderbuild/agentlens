@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { IBM_Plex_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const ibmPlexSans = IBM_Plex_Sans({
+  variable: "--font-ibm-plex",
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains",
   subsets: ["latin"],
 });
 
@@ -25,23 +26,24 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
+        className={`${ibmPlexSans.variable} ${jetbrainsMono.variable} antialiased bg-background text-foreground`}
       >
-        <header className="border-b border-card-border px-6 py-3 flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-accent">
-              <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-              <circle cx="12" cy="12" r="4" fill="currentColor"/>
-              <line x1="12" y1="2" x2="12" y2="6" stroke="currentColor" strokeWidth="2"/>
-              <line x1="12" y1="18" x2="12" y2="22" stroke="currentColor" strokeWidth="2"/>
-              <line x1="2" y1="12" x2="6" y2="12" stroke="currentColor" strokeWidth="2"/>
-              <line x1="18" y1="12" x2="22" y2="12" stroke="currentColor" strokeWidth="2"/>
-            </svg>
-            <span className="text-lg font-semibold">AgentLens</span>
+        <header className="sticky top-0 z-30 border-b border-card-border/60 px-6 py-3 flex items-center gap-4 bg-background/80 backdrop-blur-md">
+          <div className="flex items-center gap-2.5">
+            <div className="relative">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="text-accent">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.5" opacity="0.3"/>
+                <circle cx="12" cy="12" r="6" stroke="currentColor" strokeWidth="1.5"/>
+                <circle cx="12" cy="12" r="2.5" fill="currentColor"/>
+              </svg>
+              <div className="absolute inset-0 blur-md bg-accent/15 rounded-full" />
+            </div>
+            <span className="text-sm font-semibold tracking-tight text-foreground-bright">AgentLens</span>
           </div>
-          <span className="text-muted text-sm">MCP Agent Debugger</span>
+          <div className="h-3.5 w-px bg-card-border/60" />
+          <span className="text-muted text-[11px] font-mono tracking-wider uppercase">MCP Debugger</span>
         </header>
-        <main className="p-6">{children}</main>
+        <main className="p-5">{children}</main>
       </body>
     </html>
   );

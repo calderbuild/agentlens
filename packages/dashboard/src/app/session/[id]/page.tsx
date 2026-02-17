@@ -15,7 +15,6 @@ export default function SessionDetail() {
   const [selectedCallId, setSelectedCallId] = useState<string | null>(null);
   const [replayStep, setReplayStep] = useState<number | null>(null);
 
-  // Sync selection with replay step
   const handleReplayStep = (step: number | null) => {
     setReplayStep(step);
     if (step !== null && calls[step]) {
@@ -27,17 +26,36 @@ export default function SessionDetail() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64 text-muted">
-        Loading session...
+      <div className="max-w-7xl mx-auto animate-fade-in">
+        <div className="flex items-center gap-3 mb-5">
+          <div className="skeleton h-4 w-20" />
+          <div className="skeleton h-4 w-4 rounded-full" />
+          <div className="skeleton h-4 w-32" />
+        </div>
+        <div className="grid grid-cols-4 gap-3 mb-4">
+          <div className="skeleton h-[72px]" />
+          <div className="skeleton h-[72px]" />
+          <div className="skeleton h-[72px]" />
+          <div className="skeleton h-[72px]" />
+        </div>
+        <div className="skeleton h-10 mb-4" />
+        <div className="skeleton h-[400px]" />
       </div>
     );
   }
 
   if (error || !session) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 gap-4">
-        <p className="text-error">{error ?? "Session not found"}</p>
-        <Link href="/" className="text-accent hover:underline text-sm">
+      <div className="flex flex-col items-center justify-center h-[60vh] gap-4 animate-fade-in">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" className="text-error/60">
+          <circle cx="12" cy="12" r="9"/>
+          <path d="M15 9l-6 6M9 9l6 6"/>
+        </svg>
+        <p className="text-sm text-error font-mono">{error ?? "Session not found"}</p>
+        <Link
+          href="/"
+          className="text-xs text-accent hover:text-accent-bright transition-colors font-mono cursor-pointer"
+        >
           Back to sessions
         </Link>
       </div>
@@ -45,35 +63,46 @@ export default function SessionDetail() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-72px)] gap-4">
-      {/* Header */}
-      <div className="flex items-center gap-4 shrink-0">
-        <Link href="/" className="text-muted hover:text-foreground text-sm">
-          Sessions
-        </Link>
-        <span className="text-muted">/</span>
-        <span className="font-mono text-accent text-sm">{session.id}</span>
-        <span className="text-sm text-muted truncate">{session.server_command}</span>
-        <div className="ml-auto flex items-center gap-2">
-          <span className={`w-2 h-2 rounded-full ${connected ? "bg-success" : "bg-error"}`} />
-          <span className="text-xs text-muted">{connected ? "Live" : "Disconnected"}</span>
+    <div className="flex flex-col h-[calc(100vh-56px)] gap-3 max-w-full animate-fade-in">
+      {/* Breadcrumb + connection status */}
+      <div className="flex items-center justify-between shrink-0">
+        <nav className="flex items-center gap-2 text-sm">
+          <Link
+            href="/"
+            className="text-muted hover:text-foreground transition-colors cursor-pointer"
+          >
+            Sessions
+          </Link>
+          <svg width="12" height="12" viewBox="0 0 12 12" className="text-muted-dim">
+            <path d="M4.5 3l3 3-3 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+          </svg>
+          <span className="font-mono text-accent text-sm">{session.id}</span>
+          <span className="text-xs text-muted truncate max-w-[300px] hidden sm:inline">
+            {session.server_command}
+          </span>
+        </nav>
+        <div className="flex items-center gap-2">
+          <span className={`w-1.5 h-1.5 rounded-full ${connected ? "bg-success animate-pulse" : "bg-muted-dim"}`} />
+          <span className="text-[11px] font-mono text-muted">
+            {connected ? "Live" : "Offline"}
+          </span>
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Stats row */}
       <Stats session={session} calls={calls} />
 
-      {/* Replay Controls */}
+      {/* Replay bar */}
       <ReplayController
         calls={calls}
         step={replayStep}
         onStepChange={handleReplayStep}
       />
 
-      {/* Main area: Timeline + Inspector */}
-      <div className="flex flex-1 gap-4 min-h-0">
-        {/* Timeline */}
-        <div className="flex-1 bg-card border border-card-border rounded-lg overflow-hidden">
+      {/* Main area: Timeline + Inspector side-by-side */}
+      <div className="flex flex-1 gap-3 min-h-0">
+        {/* Timeline - takes remaining space */}
+        <div className="flex-1 bg-card/60 border border-card-border rounded-xl overflow-hidden min-w-0">
           <TraceTimeline
             calls={calls}
             selectedCallId={selectedCallId}
@@ -82,12 +111,12 @@ export default function SessionDetail() {
           />
         </div>
 
-        {/* Inspector */}
-        {selectedCall && (
-          <div className="w-[400px] shrink-0 bg-card border border-card-border rounded-lg overflow-hidden">
-            <Inspector call={selectedCall} onClose={() => setSelectedCallId(null)} />
-          </div>
-        )}
+        {/* Inspector - fixed width, always rendered to avoid layout shift */}
+        <div className={`w-[380px] shrink-0 bg-card/60 border border-card-border rounded-xl overflow-hidden transition-opacity duration-200 ${
+          selectedCall ? "opacity-100" : "opacity-100"
+        }`}>
+          <Inspector call={selectedCall} onClose={() => setSelectedCallId(null)} />
+        </div>
       </div>
     </div>
   );
